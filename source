@@ -1,1 +1,32 @@
-print("hello")
+-- Jump Script für Da Hood mit einer speziellen Aktivierungs-Key
+local jumpPower = 100 -- Die Höhe des Sprungs (Standardwert kann angepasst werden)
+local activationKey = "zyez" -- Die Aktivierungs-Key
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local UIS = game:GetService("UserInputService")
+local activated = false
+
+-- Überwacht die Eingabe des Aktivierungsschlüssels
+UIS.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode == Enum.KeyCode.Return then
+            local typedText = UIS:GetFocusedTextBox() and UIS:GetFocusedTextBox().Text
+            if typedText and typedText:lower() == activationKey then
+                activated = true
+                print("Jump-Script aktiviert!")
+            end
+        end
+    end
+end)
+
+-- Aktiviert das Springen bei der Taste "J" nur, wenn das Skript aktiviert ist
+UIS.InputBegan:Connect(function(input)
+    if activated and input.KeyCode == Enum.KeyCode.J then
+        humanoid.JumpPower = jumpPower
+        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
