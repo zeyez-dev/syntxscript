@@ -1,6 +1,6 @@
--- Jump Script für Da Hood mit einer speziellen Aktivierungs-Key
-local jumpPower = 100 -- Die Höhe des Sprungs (Standardwert kann angepasst werden)
-local activationKey = "zyez" -- Die Aktivierungs-Key
+-- Script Hub mit Jump-Script für Da Hood
+local jumpPower = 100
+local activationKey = "zyez"
 
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -8,25 +8,55 @@ local humanoid = character:WaitForChild("Humanoid")
 
 local UIS = game:GetService("UserInputService")
 local activated = false
+local guiOpen = false
 
--- Überwacht die Eingabe des Aktivierungsschlüssels
+-- Menü GUI erstellen
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Visible = false
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.BackgroundTransparency = 1
+Title.Text = "Script Hub"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+
+local ActivateButton = Instance.new("TextButton", MainFrame)
+ActivateButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+ActivateButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+ActivateButton.Text = "Jump Script aktivieren"
+ActivateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ActivateButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+ActivateButton.TextScaled = true
+
+-- Funktion zum Öffnen und Schließen des Menüs
 UIS.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Keyboard then
-        if input.KeyCode == Enum.KeyCode.Return then
-            local typedText = UIS:GetFocusedTextBox() and UIS:GetFocusedTextBox().Text
-            if typedText and typedText:lower() == activationKey then
-                activated = true
-                print("Jump-Script aktiviert!")
-            end
-        end
+    if input.KeyCode == Enum.KeyCode.M then -- Taste "M" öffnet/schließt das Menü
+        guiOpen = not guiOpen
+        MainFrame.Visible = guiOpen
     end
 end)
 
--- Aktiviert das Springen bei der Taste "J" nur, wenn das Skript aktiviert ist
+-- Funktion zum Aktivieren des Jump-Scripts über das Menü
+ActivateButton.MouseButton1Click:Connect(function()
+    activated = not activated
+    if activated then
+        print("Jump-Script aktiviert!")
+        ActivateButton.Text = "Jump Script deaktivieren"
+    else
+        print("Jump-Script deaktiviert!")
+        ActivateButton.Text = "Jump Script aktivieren"
+    end
+end)
+
+-- Aktiviert das Springen bei der Taste "J" nur, wenn das Jump-Script aktiviert ist
 UIS.InputBegan:Connect(function(input)
     if activated and input.KeyCode == Enum.KeyCode.J then
         humanoid.JumpPower = jumpPower
         humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     end
 end)
-
