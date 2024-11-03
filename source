@@ -1,62 +1,65 @@
--- Script Hub mit Jump-Script für Da Hood
-local jumpPower = 100
-local activationKey = "zyez"
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
+local Window = OrionLib:MakeWindow({Name = "Tutorial Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
-local UIS = game:GetService("UserInputService")
-local activated = false
-local guiOpen = false
 
--- Menü GUI erstellen
-local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 300, 0, 200)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Visible = false
+-- player tab
 
-local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 50)
-Title.BackgroundTransparency = 1
-Title.Text = "Script Hub"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextScaled = true
+local PlayerTab = Window:MakeTab({
+ Name = "Player",
+ Icon = "rbxassetid://4483345998",
+ PremiumOnly = false
+})
 
-local ActivateButton = Instance.new("TextButton", MainFrame)
-ActivateButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-ActivateButton.Position = UDim2.new(0.1, 0, 0.4, 0)
-ActivateButton.Text = "Jump Script aktivieren"
-ActivateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ActivateButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-ActivateButton.TextScaled = true
+local Section = PlayerTab:AddSection({
+ Name = "Movement"
+})
 
--- Funktion zum Öffnen und Schließen des Menüs
-UIS.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.M then -- Taste "M" öffnet/schließt das Menü
-        guiOpen = not guiOpen
-        MainFrame.Visible = guiOpen
-    end
-end)
+PlayerTab:AddSlider({
+ Name = "Walkspeed",
+ Min = 16,
+ Max = 500,
+ Default = 16,
+ Color = Color3.fromRGB(255,255,255),
+ Increment = 1,
+ ValueName = "WS",
+ Callback = function(Value)
+  game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+ end    
+})
 
--- Funktion zum Aktivieren des Jump-Scripts über das Menü
-ActivateButton.MouseButton1Click:Connect(function()
-    activated = not activated
-    if activated then
-        print("Jump-Script aktiviert!")
-        ActivateButton.Text = "Jump Script deaktivieren"
-    else
-        print("Jump-Script deaktiviert!")
-        ActivateButton.Text = "Jump Script aktivieren"
-    end
-end)
+PlayerTab:AddSlider({
+ Name = "Jump Height",
+ Min = 16,
+ Max = 500,
+ Default = 5,
+ Color = Color3.fromRGB(255,255,255),
+ Increment = 1,
+ ValueName = "Height",
+ Callback = function(Value)
+  game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+ end    
+})
 
--- Aktiviert das Springen bei der Taste "J" nur, wenn das Jump-Script aktiviert ist
-UIS.InputBegan:Connect(function(input)
-    if activated and input.KeyCode == Enum.KeyCode.J then
-        humanoid.JumpPower = jumpPower
-        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-    end
-end)
+
+--other tab
+
+local OtherTab = Window:MakeTab({
+ Name = "Other",
+ Icon = "rbxassetid://4483345998",
+ PremiumOnly = false
+})
+
+local Section = OtherTab:AddSection({
+ Name = "Other"
+})
+
+
+OtherTab:AddButton({
+ Name = "Delete Doors",
+ Callback = function()
+       game.Workspace.Doors:Destroy()
+   end    
+})
+
+OrionLib:Init()
